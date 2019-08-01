@@ -1,0 +1,1 @@
+/Users/iker/Documents/figures/target/debug/figures.dSYM: /Users/iker/Documents/figures/src/figure.rs /Users/iker/Documents/figures/src/imgutil.rs /Users/iker/Documents/figures/src/main.rs /Users/iker/Documents/figures/src/minimize.rs /Users/iker/Documents/figures/src/rectangle.rs /Users/iker/Documents/figures/src/state.rs /Users/iker/Documents/figures/src/util.rs

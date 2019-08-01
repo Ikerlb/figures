@@ -1,6 +1,6 @@
 use rand::{Rng,rngs::ThreadRng};
 use super::util::*;
-use super::figure::Figure;
+use super::figure::Mutate;
 
 #[derive(Debug,Clone)]
 pub struct Rectangle{
@@ -12,7 +12,7 @@ pub struct Rectangle{
     y2:u32,
 }
 
-impl Figure for Rectangle{
+impl Mutate for Rectangle{
     fn mutate(&mut self,rand:&mut ThreadRng){
         let (x1,y1,x2,y2)=self.bounds();
         let dx=rand.gen_range(-16i32,17i32);
@@ -35,12 +35,12 @@ impl Figure for Rectangle{
         vec
     }
 
-    fn set_figure(&mut self,other:&Self){
-        self.x1=other.x1;
-        self.x2=other.x2;
-        self.y1=other.y1;
-        self.y2=other.y2;
-    }
+    // fn set_figure(&mut self,other:&Self){
+    //     self.x1=other.x1;
+    //     self.x2=other.x2;
+    //     self.y1=other.y1;
+    //     self.y2=other.y2;
+    // }
 }
 
 

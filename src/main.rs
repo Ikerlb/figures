@@ -4,8 +4,9 @@ mod rectangle;
 mod util;
 mod figure;
 mod minimize;
-use image::{imageops,FilterType};
+mod ellipse;
 
+use image::{imageops,FilterType};
 use time::PreciseTime;
 use clap::{Arg, App};
 use state::State;
@@ -49,6 +50,17 @@ fn main() {
                         .required(false)
                         .help("size of output image")
                         .takes_value(true))
+                    .arg(Arg::with_name("mode")
+                        .short("m")
+                        .long("mode")
+                        .required(true)
+                        .help("figure mode. 1 is for rectangles (default)")
+                        .takes_value(true))
+                    .arg(Arg::with_name("verbose")
+                        .short("v")
+                        .long("verbose")
+                        .required(false)
+                        .help("runs program in verbose mode"))
                 .get_matches();
 
     let input_file=matches.value_of("inputFile").unwrap();
@@ -69,15 +81,30 @@ fn main() {
                            .unwrap_or("1024")
                            .parse::<u32>()
                            .unwrap();
+    let mode=matches.value_of("mode")
+                   .unwrap_or("1")
+                   .parse::<u32>()
+                   .unwrap();
+    let verbose=matches.is_present("verbose");
     let t=image::open(input_file).unwrap().to_rgba();
     let target=imageops::resize(&t,resize,resize,FilterType::Nearest);
     let mut state=State::new(target,alpha);
+    println!("Starting...");
+    let start=PreciseTime::now();
     for i in 0..n{
-        let start = PreciseTime::now();
-        state.step();
-        let end = PreciseTime::now();
-        println!("Figure {} took {} seconds. {}% complete.",i+1,start.to(end),((i+1)*100)/n);
+        let fstart=PreciseTime::now();
+        state.step(1000,mode);
+        let fend=PreciseTime::now();
+        v(verbose,format!("Figure {} took {} seconds. {}% complete.",i+1,fstart.to(fend),((i+1)*100)/n));
     }
+    let end=PreciseTime::now();
+    println!("Process ended in {} seconds.",start.to(end));
     let img=imageops::resize(&state.current,output_size,output_size,FilterType::Nearest);
     img.save(output_file).unwrap();
+}
+
+fn v(mode:bool,s:String){
+    if mode {
+        println!("{}",s);
+    }
 }

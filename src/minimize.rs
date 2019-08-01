@@ -2,17 +2,18 @@ use super::state::State;
 use super::figure::Figure;
 
 
-pub fn hill_descent<T:Figure+Clone>(state:&mut State,age:usize,figure:&mut T) -> i32{
+pub fn hill_descent(state:&mut State,age:usize,figure:Figure) -> (Figure,i32){
     let mut bc=state.cost;
+    let mut figure=figure;
     for _ in 0..age{
         let prev=figure.clone();
         figure.mutate(&mut state.rng);
-        let c=state.new_cost(figure);
+        let c=state.new_cost(&mut figure);
         if c>=bc{
-            figure.set_figure(&prev);
+            figure=prev;
         } else{
             bc=c;
         }
     }
-    bc
+    (figure,bc)
 }
