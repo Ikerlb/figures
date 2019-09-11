@@ -13,20 +13,26 @@ pub fn average_color(target:&RgbaImage) -> (u8,u8,u8){
     ((sr/count) as u8,(sg/count) as u8,(sb/count) as u8)
 }
 
-pub fn compute_color(target:&RgbaImage,scanlines:&Vec<(u32,u32,u32)>,alpha:u8) -> Rgba<u8>{
+pub fn compute_color(target:&RgbaImage,current:&RgbaImage,scanlines:&Vec<(u32,u32,u32)>,alpha:u8) -> Rgba<u8>{
     let (mut sr,mut sg,mut sb,mut count)=(0,0,0,0);
+    let a=255f32/alpha as f32;
     for &(j,s,e) in scanlines{
         for i in s..=e{
-            let tp=target[(i,j)];
-            if let &[r,g,b,_]=tp.channels(){
-                sr+=r as usize;
-                sg+=g as usize;
-                sb+=b as usize;
-                count+=1;
-            }
+            let tp=target[(i,j)].channels();
+            let cp=current[(i,j)].channels();
+            let tr=tp[0] as f32;
+            let tg=tp[1] as f32;
+            let tb=tp[2] as f32;
+            let cr=cp[0] as f32;
+            let cg=cp[1] as f32;
+            let cb=cp[2] as f32;
+            sr+=(a*(tr-cr)+cr) as u32;
+            sg+=(a*(tg-cg)+cg) as u32;
+            sb+=(a*(tb-cb)+cb) as u32;
+            count+=1;
         }
     }
-    Rgba{data:[(sr/count) as u8,(sg/count) as u8,(sb/count) as u8,alpha]}
+    Rgba([(sr/count) as u8,(sg/count) as u8,(sb/count) as u8,alpha])
 }
 
 pub fn full_cost(target:&RgbaImage,current:&RgbaImage) -> i32{
